@@ -219,7 +219,7 @@ pd.crosstab(
 
 # %% [markdown]
 #
-# **Redundante columns**
+# **Redundant columns**
 # * For every entry in `"education"`, there is only one single corresponding
 # value in `"education-num"`.
 # * This shows that `"education"` and `"education-num"` give you the same information.
@@ -237,7 +237,7 @@ adult_census = adult_census.drop(
 
 
 # %% [markdown]
-# #### Using pairplots
+# #### Using pairplot
 #
 # Another way to inspect the relationship between variables is to do a `pairplot` and show how each
 # variable differs according to our target, i.e. `"class"`. Plots along the
@@ -262,74 +262,6 @@ _ = sns.pairplot(
     diag_kws={"bins": 30},
 )
 
-# %% [markdown]
-# ## Towards making predictions: creating decision rules by hand
-#
-# By looking at the previous plots, we could create some hand-written rules that
-# predict whether someone has a high- or low-income. For instance, we could
-# focus on the combination of the `"hours-per-week"` and `"age"` features.
-
-# %%
-_ = sns.scatterplot(
-    x="age",
-    y="hours-per-week",
-    data=adult_census[:n_samples_to_plot],
-    hue=target_column,
-    alpha=0.5,
-)
-
-# %% [markdown]
-#
-# * The data points (circles) show the distribution of `"hours-per-week"` and
-# `"age"` in the dataset.
-# * Blue points mean low-income and orange points mean high-income.
-# * This part of the plot is the same as the bottom-left plot in the pairplot above.
-#
-# In this plot, we can try to find regions that mainly contains a single class
-# such that we can easily decide what class one should predict. We could come up
-# with hand-written rules as shown in this plot:
-
-# %%
-import matplotlib.pyplot as plt
-
-ax = sns.scatterplot(
-    x="age",
-    y="hours-per-week",
-    data=adult_census[:n_samples_to_plot],
-    hue=target_column,
-    alpha=0.5,
-)
-
-age_limit = 27
-plt.axvline(x=age_limit, ymin=0, ymax=1, color="black", linestyle="--")
-
-hours_per_week_limit = 40
-plt.axhline(
-    y=hours_per_week_limit, xmin=0.18, xmax=1, color="black", linestyle="--"
-)
-
-plt.annotate("<=50K", (17, 25), rotation=90, fontsize=35)
-plt.annotate("<=50K", (35, 20), fontsize=35)
-_ = plt.annotate("???", (45, 60), fontsize=35)
-
-# %% [markdown]
-# * In the region `age < 27` (left region) the prediction is low-income. Indeed,
-#   there are many blue points and we cannot see any orange points.
-# * In the region `age > 27 AND hours-per-week < 40` (bottom-right region), the
-#   prediction is low-income. Indeed, there are many blue points and only a few
-#   orange points.
-# * In the region `age > 27 AND hours-per-week > 40` (top-right region), we see
-#   a mix of blue points and orange points. It seems complicated to choose which
-#   class we should predict in this region.
-#
-# **Some machine learning models work similarly to what we just did**
-#
-# * We choose the two thresholds (27 years and 40 hours) arbitrarily
-# * Decision trees work similarly, but more systematically and in a more scalable way
-#   * Decision trees are systematic: They choose the "best" splits based on data without human intervention or inspection.
-#   * Decision trees scale: They easily handle data with many more columns, which is difficult for humans.
-# * We cover decision trees later in this course.
-
 
 # %% [markdown]
 # ## Notebook Recap
@@ -349,8 +281,6 @@ _ = plt.annotate("???", (45, 60), fontsize=35)
 #   and evaluating your machine learning model;
 # * having redundant (or highly correlated) columns can be a problem for some
 #   machine learning algorithms;
-# * contrary to decision tree, linear models can only capture linear
-#   interactions, so be aware of non-linear relationships in your data.
 
 
 # %% [markdown]
