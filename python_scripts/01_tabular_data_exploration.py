@@ -5,13 +5,14 @@
 #     name: python3
 # ---
 
+
 # %% [markdown]
 # # First look at our dataset
 #
-# In this notebook, we look at the necessary steps required before any machine
-#  learning takes place. It involves:
-#
-# * loading the data;
+# Assuming you are familiar with pandas dataframes, in this notebook we look at the 
+# necessary steps required before any machine learning takes place. It involves:
+
+# * highlighting that it is crucial to inspect the data before building a model
 # * looking at the variables in the dataset, in particular, differentiate
 #   between numerical and categorical variables, which need different
 #   preprocessing in most machine learning workflows;
@@ -19,85 +20,65 @@
 #   dataset.
 
 # %% [markdown]
+# ```{note}
+# **To the instructor**
+#
+# Instead of live-coding this notebook, explain the important concepts before ML and show the descriptive statistics.
+# TBC.
+# ```
+
+
+# %% [markdown]
 # ## Loading the adult census dataset
 #
-# We use data from the 1994 US census that we downloaded from
-# [OpenML](http://openml.org/).
-#
-# You can look at the OpenML webpage to learn more about this dataset:
-# <http://www.openml.org/d/1590>
-#
-# The dataset is available as a CSV (Comma-Separated Values) file and we use
-# `pandas` to read it.
-#
-# ```{note}
-# [Pandas](https://pandas.pydata.org/) is a Python library used for
-# manipulating 1 and 2 dimensional structured data. If you have never used
-# pandas, we recommend you look at this
-# [tutorial](https://pandas.pydata.org/docs/user_guide/10min.html).
-# ```
+# We use pandas to load the data.
+
+
 
 # %%
 import pandas as pd
 
 adult_census = pd.read_csv("../datasets/adult-census.csv")
 
-# %% [markdown]
-# The goal with this data is to predict whether a person earns over 50K a year
-# from heterogeneous data such as age, employment, education, family
-# information, etc.
-
-# %% [markdown]
-# ## The variables (columns) in the dataset
-#
-# The data are stored in a `pandas` dataframe. A dataframe is a type of
-# structured data composed of 2 dimensions. This type of data is also referred
-# as tabular data.
-#
-# Each row represents a "sample". In the field of machine learning or
-# descriptive statistics, commonly used equivalent terms are "record",
-# "instance", or "observation".
-#
-# Each column represents a type of information that has been collected and is
-# called a "feature". In the field of machine learning and descriptive
-# statistics, commonly used equivalent terms are "variable", "attribute", or
-# "covariate".
-
-# %% [markdown]
-# A quick way to inspect the dataframe is to show the first few lines with the
-# `head` method:
 
 # %%
 adult_census.head()
 
+
 # %% [markdown]
-# The column named **class** is our target variable (i.e., the variable which we
-# want to predict). The two possible classes are `<=50K` (low-revenue) and
-# `>50K` (high-revenue). The resulting prediction problem is therefore a binary
-# classification problem as `class` has only two possible values. We use the
-# left-over columns (any column other than `class`) as input variables for our
-# model.
+# **Rows and columns**
+#
+# * Each row in the dataframe represents a "sample". In the field of machine learning or
+# descriptive statistics, commonly used equivalent terms are "record",
+# "instance", or "observation". 
+# * Each column represents a type of information that has been collected and is
+# called a "feature". In the field of machine learning and descriptive
+# statistics, commonly used equivalent terms are "variable", "attribute", or
+# "covariate".
+# 
 
 # %%
 target_column = "class"
-adult_census[target_column].value_counts()
+adult_census[target_column].unique()
+
 
 # %% [markdown]
-# ```{note}
-# Here, classes are slightly imbalanced, meaning there are more samples of one
-# or more classes compared to others. In this case, we have many more samples
-# with `" <=50K"` than with `" >50K"`. Class imbalance happens often in practice
-# and may need special techniques when building a predictive model.
-#
-# For example in a medical setting, if we are trying to predict whether subjects
-# may develop a rare disease, there would be a lot more healthy subjects than
-# ill subjects in the dataset.
-# ```
+# **Target and input variables**
+# 
+# * Our target variable is the column **class**. 
+# * It has two classes: `<=50K` (low-revenue) and
+# `>50K` (high-revenue). 
+# * Thus, the prediction problem is a binary classification problem. 
+# * The columns other than class are input variables for our model.
+
 
 # %% [markdown]
-# The dataset contains both numerical and categorical data. Numerical values
-# take continuous values, for example `"age"`. Categorical values can have a
-# finite number of values, for example `"native-country"`.
+# **Categorical and numerical columns**
+# 
+# * There are numerical and categorical columns in the data 
+# * Numerical columns take continuous values. Example: `"age"`
+# * Categorical columns take a finite number of values. Example: "`native-country`"
+
 
 # %%
 numerical_columns = [
@@ -139,7 +120,8 @@ print(
 print(f"The dataset contains {adult_census.shape[1] - 1} features.")
 
 # %% [markdown]
-# ## Visual inspection of the data
+# ## Inspecting the data: individual columns
+#
 # Before building a predictive model, it is a good idea to look at the data:
 #
 # * maybe the task you are trying to achieve can be solved without machine
@@ -151,7 +133,11 @@ print(f"The dataset contains {adult_census.shape[1] - 1} features.")
 #   values), or from the way the data is processed afterwards (for example
 #   capped values).
 
-# %% [markdown]
+
+# %% [markdown] 
+# 
+# ### Visually inspecting numerical columns
+#
 # Let's look at the distribution of individual features, to get some insights
 # about the data. We can start by plotting histograms, note that this only works
 # for features containing numerical values:
@@ -160,85 +146,100 @@ print(f"The dataset contains {adult_census.shape[1] - 1} features.")
 _ = adult_census.hist(figsize=(20, 14))
 
 # %% [markdown]
-# ```{tip}
-# In the previous cell, we used the following pattern: `_ = func()`. We do this
-# to avoid showing the output of `func()` which in this case is not that
-# useful. We actually assign the output of `func()` into the variable `_`
-# (called underscore). By convention, in Python the underscore variable is used
-# as a "garbage" variable to store results that we are not interested in.
-# ```
 #
 # We can already make a few comments about some of the variables:
 #
 # * `"age"`: there are not that many points for `age > 70`. The dataset
 #   description does indicate that retired people have been filtered out
 #   (`hours-per-week > 0`);
-# * `"education-num"`: peak at 10 and 13, hard to tell what it corresponds to
-#   without looking much further. We'll do that later in this notebook;
+# * `"education-num"`: peak at 10 and 13. These are the number of years of education.
 # * `"hours-per-week"` peaks at 40, this was very likely the standard number of
 #   working hours at the time of the data collection;
 # * most values of `"capital-gain"` and `"capital-loss"` are close to zero.
 
 # %% [markdown]
+# ### Inspecting categorical columns 
+#
 # For categorical variables, we can look at the distribution of values:
+# * We should do this for both the target variable and the input variables
+
+# %%
+adult_census[target_column].value_counts()
+
+
+# %% [markdown]
+# 
+# #### Class imbalance
+# **Imbalance in the target variable**
+#
+# * Classes are slightly imbalanced, meaning there are more samples of one
+# or more classes compared to others. 
+# * In this case, we have many more samples with `" <=50K"` than with `" >50K"`. 
+# * Class imbalance in the target variable happens often in practice
+# and may need special techniques when building a predictive model.
+# * For example in a medical setting, if we are trying to predict whether subjects
+# may develop a rare disease, there would be a lot more healthy subjects than
+# ill subjects in the dataset.
+# 
+
+
+# %% [markdown]
+#
+# **Imbalance in the input data** 
+#
 
 # %%
 adult_census["sex"].value_counts()
 
 # %% [markdown]
-# Note that the data collection process resulted in an important imbalance
-# between the number of male/female samples.
 #
-# Be aware that training a model with such data imbalance can cause
-# disproportioned prediction errors for the under-represented groups. This is a
-# typical cause of
+# * The data collection process led to an important imbalance 
+# between the number of male/female samples. Thus, our data are **not representative** of the US population.
+# * Training a model with such data imbalance can cause
+# disproportioned prediction errors for the under-represented groups. 
+# * This is a typical cause of
 # [fairness](https://docs.microsoft.com/en-us/azure/machine-learning/concept-fairness-ml#what-is-machine-learning-fairness)
 # problems if used naively when deploying a machine learning based system in a
 # real life setting.
 #
-# We recommend our readers to refer to [fairlearn.org](https://fairlearn.org)
-# for resources on how to quantify and potentially mitigate fairness issues
-# related to the deployment of automated decision making systems that rely on
-# machine learning components.
-#
-# Studying why the data collection process of this dataset lead to such an
-# unexpected gender imbalance is beyond the scope of this MOOC but we should
-# keep in mind that this dataset is not representative of the US population
-# before drawing any conclusions based on its statistics or the predictions of
-# models trained on it.
 
-# %%
-adult_census["education"].value_counts()
 
 # %% [markdown]
-# As noted above, `"education-num"` distribution has two clear peaks around 10
-# and 13. It would be reasonable to expect that `"education-num"` is the number
-# of years of education.
+# ## Inspecting relationships between columns
 #
-# Let's look at the relationship between `"education"` and `"education-num"`.
+
+# %% [markdown]
+# ### In pandas
+# 
+# * We can use the crosstabulation feature from pandas to see how two variables are related
+
 # %%
 pd.crosstab(
     index=adult_census["education"], columns=adult_census["education-num"]
 )
 
 # %% [markdown]
-# For every entry in `\"education\"`, there is only one single corresponding
-# value in `\"education-num\"`. This shows that `"education"` and
-# `"education-num"` give you the same information. For example,
-# `"education-num"=2` is equivalent to `"education"="1st-4th"`. In practice that
-# means we can remove `"education-num"` without losing information. Note that
-# having redundant (or highly correlated) columns can be a problem for machine
+#
+# **Redundante columns**
+# * For every entry in `"education"`, there is only one single corresponding
+# value in `"education-num"`. 
+# * This shows that `"education"` and `"education-num"` give you the same information. 
+# * Thus, we can remove `"education-num"` without losing information. 
+# * Note that having redundant (or highly correlated) columns can be a problem for machine
 # learning algorithms.
+#
+# We drop this column now and in all future notebooks.
+#
+
+# %%
+adult_census = adult_census.drop(columns=["education"]) # duplicated in categorical column
+
+
 
 # %% [markdown]
-# ```{note}
-# In the upcoming notebooks, we will only keep the `"education"` variable,
-# excluding the `"education-num"` variable since the latter is redundant with
-# the former.
-# ```
-
-# %% [markdown]
-# Another way to inspect the data is to do a `pairplot` and show how each
+# #### Using pairplots
+#
+# Another way to inspect the relationship between variables is to do a `pairplot` and show how each
 # variable differs according to our target, i.e. `"class"`. Plots along the
 # diagonal show the distribution of individual variables for each `"class"`. The
 # plots on the off-diagonal can reveal interesting interactions between
@@ -262,7 +263,7 @@ _ = sns.pairplot(
 )
 
 # %% [markdown]
-# ## Creating decision rules by hand
+# ## Towards making predictions: creating decision rules by hand
 #
 # By looking at the previous plots, we could create some hand-written rules that
 # predict whether someone has a high- or low-income. For instance, we could
@@ -278,10 +279,11 @@ _ = sns.scatterplot(
 )
 
 # %% [markdown]
-# The data points (circles) show the distribution of `"hours-per-week"` and
-# `"age"` in the dataset. Blue points mean low-income and orange points mean
-# high-income. This part of the plot is the same as the bottom-left plot in the
-# pairplot above.
+# 
+# * The data points (circles) show the distribution of `"hours-per-week"` and
+# `"age"` in the dataset. 
+# * Blue points mean low-income and orange points mean high-income. 
+# * This part of the plot is the same as the bottom-left plot in the pairplot above.
 #
 # In this plot, we can try to find regions that mainly contains a single class
 # such that we can easily decide what class one should predict. We could come up
@@ -319,29 +321,21 @@ _ = plt.annotate("???", (45, 60), fontsize=35)
 # * In the region `age > 27 AND hours-per-week > 40` (top-right region), we see
 #   a mix of blue points and orange points. It seems complicated to choose which
 #   class we should predict in this region.
-#
-# It is interesting to note that some machine learning models work similarly to
-# what we did: they are known as decision tree models. The two thresholds that
-# we chose (27 years and 40 hours) are somewhat arbitrary, i.e. we chose them by
-# only looking at the pairplot. In contrast, a decision tree chooses the "best"
-# splits based on data without human intervention or inspection. Decision trees
-# will be covered more in detail in a future module.
-#
-# Note that machine learning is often used when creating rules by hand is not
-# straightforward. For example because we are in high dimension (many features
-# in a table) or because there are no simple and obvious rules that separate the
-# two classes as in the top-right region of the previous plot.
-#
-# To sum up, the important thing to remember is that in a machine-learning
-# setting, a model automatically creates the "rules" from the existing data in
-# order to make predictions on new unseen data.
+# 
+# **Some machine learning models work similarly to what we just did**
+# 
+# * We choose the two thresholds (27 years and 40 hours) arbitrarily
+# * Decision trees work similarly, but more systematically and in a more scalable way
+#   * Decision trees are systematic: They choose the "best" splits based on data without human intervention or inspection.
+#   * Decision trees scale: They easily handle data with many more columns, which is difficult for humans.
+# * We cover decision trees later in this course.
+
 
 # %% [markdown]
 # ## Notebook Recap
 #
 # In this notebook we:
 #
-# * loaded the data from a CSV file using `pandas`;
 # * looked at the different kind of variables to differentiate between
 #   categorical and numerical variables;
 # * inspected the data with `pandas` and `seaborn`. Data inspection can allow
@@ -357,3 +351,23 @@ _ = plt.annotate("???", (45, 60), fontsize=35)
 #   machine learning algorithms;
 # * contrary to decision tree, linear models can only capture linear
 #   interactions, so be aware of non-linear relationships in your data.
+
+
+# %% [markdown]
+# ### Sources
+#
+# **Data**
+# 
+# We use data from the 1994 US census that we downloaded from
+# [OpenML](http://openml.org/).
+#
+# You can look at the OpenML webpage to learn more about this dataset:
+# <http://www.openml.org/d/1590>
+#
+# **Fairness in ML**
+# 
+# We recommend our readers to refer to [fairlearn.org](https://fairlearn.org)
+# for resources on how to quantify and potentially mitigate fairness issues
+# related to the deployment of automated decision making systems that rely on
+# machine learning components.
+#
