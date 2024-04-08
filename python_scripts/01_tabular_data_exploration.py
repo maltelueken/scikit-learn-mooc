@@ -9,7 +9,7 @@
 # %% [markdown]
 # # First look at our dataset
 #
-# Assuming you are familiar with pandas dataframes, in this notebook we look at the 
+# Assuming you are familiar with pandas dataframes, in this notebook we look at the
 # necessary steps required before any machine learning takes place. It involves:
 
 # * highlighting that it is crucial to inspect the data before building a model
@@ -34,7 +34,6 @@
 # We use pandas to load the data.
 
 
-
 # %%
 import pandas as pd
 
@@ -50,12 +49,12 @@ adult_census.head()
 #
 # * Each row in the dataframe represents a "sample". In the field of machine learning or
 # descriptive statistics, commonly used equivalent terms are "record",
-# "instance", or "observation". 
+# "instance", or "observation".
 # * Each column represents a type of information that has been collected and is
 # called a "feature". In the field of machine learning and descriptive
 # statistics, commonly used equivalent terms are "variable", "attribute", or
 # "covariate".
-# 
+#
 
 # %%
 target_column = "class"
@@ -64,18 +63,18 @@ adult_census[target_column].unique()
 
 # %% [markdown]
 # **Target and input variables**
-# 
-# * Our target variable is the column **class**. 
+#
+# * Our target variable is the column **class**.
 # * It has two classes: `<=50K` (low-revenue) and
-# `>50K` (high-revenue). 
-# * Thus, the prediction problem is a binary classification problem. 
+# `>50K` (high-revenue).
+# * Thus, the prediction problem is a binary classification problem.
 # * The columns other than class are input variables for our model.
 
 
 # %% [markdown]
 # **Categorical and numerical columns**
-# 
-# * There are numerical and categorical columns in the data 
+#
+# * There are numerical and categorical columns in the data
 # * Numerical columns take continuous values. Example: `"age"`
 # * Categorical columns take a finite number of values. Example: "`native-country`"
 
@@ -134,8 +133,8 @@ print(f"The dataset contains {adult_census.shape[1] - 1} features.")
 #   capped values).
 
 
-# %% [markdown] 
-# 
+# %% [markdown]
+#
 # ### Visually inspecting numerical columns
 #
 # Let's look at the distribution of individual features, to get some insights
@@ -158,7 +157,7 @@ _ = adult_census.hist(figsize=(20, 14))
 # * most values of `"capital-gain"` and `"capital-loss"` are close to zero.
 
 # %% [markdown]
-# ### Inspecting categorical columns 
+# ### Inspecting categorical columns
 #
 # For categorical variables, we can look at the distribution of values:
 # * We should do this for both the target variable and the input variables
@@ -168,24 +167,24 @@ adult_census[target_column].value_counts()
 
 
 # %% [markdown]
-# 
+#
 # #### Class imbalance
 # **Imbalance in the target variable**
 #
 # * Classes are slightly imbalanced, meaning there are more samples of one
-# or more classes compared to others. 
-# * In this case, we have many more samples with `" <=50K"` than with `" >50K"`. 
+# or more classes compared to others.
+# * In this case, we have many more samples with `" <=50K"` than with `" >50K"`.
 # * Class imbalance in the target variable happens often in practice
 # and may need special techniques when building a predictive model.
 # * For example in a medical setting, if we are trying to predict whether subjects
 # may develop a rare disease, there would be a lot more healthy subjects than
 # ill subjects in the dataset.
-# 
+#
 
 
 # %% [markdown]
 #
-# **Imbalance in the input data** 
+# **Imbalance in the input data**
 #
 
 # %%
@@ -193,10 +192,10 @@ adult_census["sex"].value_counts()
 
 # %% [markdown]
 #
-# * The data collection process led to an important imbalance 
+# * The data collection process led to an important imbalance
 # between the number of male/female samples. Thus, our data are **not representative** of the US population.
 # * Training a model with such data imbalance can cause
-# disproportioned prediction errors for the under-represented groups. 
+# disproportioned prediction errors for the under-represented groups.
 # * This is a typical cause of
 # [fairness](https://docs.microsoft.com/en-us/azure/machine-learning/concept-fairness-ml#what-is-machine-learning-fairness)
 # problems if used naively when deploying a machine learning based system in a
@@ -210,7 +209,7 @@ adult_census["sex"].value_counts()
 
 # %% [markdown]
 # ### In pandas
-# 
+#
 # * We can use the crosstabulation feature from pandas to see how two variables are related
 
 # %%
@@ -222,9 +221,9 @@ pd.crosstab(
 #
 # **Redundante columns**
 # * For every entry in `"education"`, there is only one single corresponding
-# value in `"education-num"`. 
-# * This shows that `"education"` and `"education-num"` give you the same information. 
-# * Thus, we can remove `"education-num"` without losing information. 
+# value in `"education-num"`.
+# * This shows that `"education"` and `"education-num"` give you the same information.
+# * Thus, we can remove `"education-num"` without losing information.
 # * Note that having redundant (or highly correlated) columns can be a problem for machine
 # learning algorithms.
 #
@@ -232,8 +231,9 @@ pd.crosstab(
 #
 
 # %%
-adult_census = adult_census.drop(columns=["education"]) # duplicated in categorical column
-
+adult_census = adult_census.drop(
+    columns=["education"]
+)  # duplicated in categorical column
 
 
 # %% [markdown]
@@ -279,10 +279,10 @@ _ = sns.scatterplot(
 )
 
 # %% [markdown]
-# 
+#
 # * The data points (circles) show the distribution of `"hours-per-week"` and
-# `"age"` in the dataset. 
-# * Blue points mean low-income and orange points mean high-income. 
+# `"age"` in the dataset.
+# * Blue points mean low-income and orange points mean high-income.
 # * This part of the plot is the same as the bottom-left plot in the pairplot above.
 #
 # In this plot, we can try to find regions that mainly contains a single class
@@ -321,9 +321,9 @@ _ = plt.annotate("???", (45, 60), fontsize=35)
 # * In the region `age > 27 AND hours-per-week > 40` (top-right region), we see
 #   a mix of blue points and orange points. It seems complicated to choose which
 #   class we should predict in this region.
-# 
+#
 # **Some machine learning models work similarly to what we just did**
-# 
+#
 # * We choose the two thresholds (27 years and 40 hours) arbitrarily
 # * Decision trees work similarly, but more systematically and in a more scalable way
 #   * Decision trees are systematic: They choose the "best" splits based on data without human intervention or inspection.
@@ -357,7 +357,7 @@ _ = plt.annotate("???", (45, 60), fontsize=35)
 # ### Sources
 #
 # **Data**
-# 
+#
 # We use data from the 1994 US census that we downloaded from
 # [OpenML](http://openml.org/).
 #
@@ -365,7 +365,7 @@ _ = plt.annotate("???", (45, 60), fontsize=35)
 # <http://www.openml.org/d/1590>
 #
 # **Fairness in ML**
-# 
+#
 # We recommend our readers to refer to [fairlearn.org](https://fairlearn.org)
 # for resources on how to quantify and potentially mitigate fairness issues
 # related to the deployment of automated decision making systems that rely on
