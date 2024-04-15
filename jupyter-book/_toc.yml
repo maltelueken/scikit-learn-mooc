@@ -15,7 +15,6 @@ parts:
     - file: python_scripts/01_tabular_data_exploration
     - file: python_scripts/01_tabular_data_exploration_ex_01
     - file: python_scripts/01_tabular_data_exploration_sol_01
-    - file: predictive_modeling_pipeline/01_tabular_data_exploration_quiz_m1_01
   - file: predictive_modeling_pipeline/02_numerical_pipeline_index
     sections:
     - file: python_scripts/02_numerical_pipeline_introduction
@@ -28,17 +27,36 @@ parts:
     - file: predictive_modeling_pipeline/02_numerical_pipeline_video_cross_validation
     - file: python_scripts/02_numerical_pipeline_cross_validation
     - file: predictive_modeling_pipeline/02_numerical_pipeline_quiz_m1_02
+- caption: Linear models
+  chapters:
+  - file: linear_models/linear_models_module_intro
+  - file: linear_models/linear_models_intuitions_index
+    sections:
+    - file: linear_models/linear_models_slides
+- caption: Categorical data
+  chapters:
   - file: predictive_modeling_pipeline/03_categorical_pipeline_index
     sections:
     - file: python_scripts/03_categorical_pipeline
     - file: python_scripts/03_categorical_pipeline_ex_01
     - file: python_scripts/03_categorical_pipeline_sol_01
     - file: python_scripts/03_categorical_pipeline_column_transformer
+- caption: Decision tree models
+  chapters:
+  - file: trees/trees_module_intro
+  - file: trees/trees_intuitions_index
+    sections:
+    - file: trees/slides
+    - file: trees/trees_quiz_m5_01
+- caption: Combining categorical and numerical data
+  chapters:
+  - file: predictive_modeling_pipeline/04_combining_mixed_data_index
+    sections:
     - file: predictive_modeling_pipeline/03_categorical_pipeline_visualization_video
     - file: python_scripts/03_categorical_pipeline_visualization
     - file: predictive_modeling_pipeline/03_categorical_pipeline_quiz_m1_03
-  - file: predictive_modeling_pipeline/wrap_up_quiz
-  - file: predictive_modeling_pipeline/predictive_modeling_module_take_away
+    - file: predictive_modeling_pipeline/wrap_up_quiz
+    - file: predictive_modeling_pipeline/predictive_modeling_module_take_away
 - caption: Selecting the best model
   chapters:
   - file: overfit/overfit_module_intro
@@ -50,19 +68,6 @@ parts:
     - file: overfit/learning_validation_curves_slides
     - file: python_scripts/cross_validation_validation_curve
     - file: python_scripts/cross_validation_learning_curve
-- caption: Linear models
-  chapters:
-  - file: linear_models/linear_models_module_intro
-  - file: linear_models/linear_models_intuitions_index
-    sections:
-    - file: linear_models/linear_models_slides
-- caption: Decision tree models
-  chapters:
-  - file: trees/trees_module_intro
-  - file: trees/trees_intuitions_index
-    sections:
-    - file: trees/slides
-    - file: trees/trees_quiz_m5_01
 - caption: Concluding remarks
   chapters:
   - file: concluding_remarks_video.md
