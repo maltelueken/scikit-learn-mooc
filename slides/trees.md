@@ -239,6 +239,20 @@ different columns have very different physical units.
 However there piecewise constant nature makes there prediction function
 non-smooth.
 
+Single decision trees have low generalization performance because they have high variance. Slight changes in the data set can lead to very different trees.
+
 Individual decision trees are therefore are almost never competitive on their
 own but they can become very strong models when combined in ensembles which can
 make the prediction function much smoother.
+
+
+To improve the generalization performance, the predictions of multiple decision trees can be combined
+
+**Pruning**: Grow a large tree and prune by finding a subtree that has best trade-off between fit to the data and complexity (number of terminal nodes)
+
+**Bagging**: Create bootstrap samples (resampling) and fit decision trees to them. Combine tree predictions (e.g. average or majority voting)
+
+**Random forest**: Bagging but at each split only variables from a random subset of all variables can be considered. 
+This decorrelates the decision tree predictions. Otherwise, strong predictors would always be used for first splits leading to similar trees.
+
+**Boosting**: Fit small trees sequentially. Each tree uses the residuals of the predictions of the previous trees as training targets. Add a shrunken version of the tree to the tree ensemble.
